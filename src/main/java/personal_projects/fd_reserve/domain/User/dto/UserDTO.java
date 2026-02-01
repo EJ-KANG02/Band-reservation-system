@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import personal_projects.fd_reserve.domain.Officer.dto.OfficerDTO;
 import personal_projects.fd_reserve.global.common.enums.Role;
 
 public class UserDTO {
@@ -38,7 +39,9 @@ public class UserDTO {
             private String teamName;  // 소속 팀 이름
 
             @NotNull(message = "역할은 필수 입력 값입니다.")
-            private Role role;
+            private Role role; //부원 or 회장단
+
+            private OfficerDTO.OfficerRequest.officerSignUpRequest officerInfo; //회장단일 경우에만 데이터가 채워짐
         }
     }
 }

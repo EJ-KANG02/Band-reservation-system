@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import personal_projects.fd_reserve.global.common.enums.Role;
+import personal_projects.fd_reserve.global.common.enums.Status;
 
 @Entity
 @Getter
@@ -36,5 +37,13 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
+
     private String teamName;
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }
