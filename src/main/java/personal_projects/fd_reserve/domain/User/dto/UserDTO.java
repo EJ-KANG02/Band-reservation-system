@@ -15,6 +15,8 @@ public class UserDTO {
 
         @Getter
         @NoArgsConstructor
+        @AllArgsConstructor
+        @Builder
         public static class LoginRequest{
             private String kakaoId;
         }
