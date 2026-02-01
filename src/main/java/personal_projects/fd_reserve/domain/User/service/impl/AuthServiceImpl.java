@@ -15,20 +15,24 @@ import personal_projects.fd_reserve.global.common.enums.Role;
 import personal_projects.fd_reserve.global.common.enums.Status;
 import personal_projects.fd_reserve.global.error.code.status.ErrorStatus;
 import personal_projects.fd_reserve.global.error.handler.UserException;
+import personal_projects.fd_reserve.global.jwt.TokenProvider;
+import personal_projects.fd_reserve.global.jwt.dto.TokenDTO;
 
 @Service
 @Transactional
 public class AuthServiceImpl implements AuthService{
     private final UserRepository userRepository;
     private final OfficerRepository officerRepository;
+    private final TokenProvider tokenProvider;
 
-    public AuthServiceImpl(UserRepository userRepository, OfficerRepository officerRepository) {
+    public AuthServiceImpl(UserRepository userRepository, OfficerRepository officerRepository, TokenProvider tokenProvider) {
         this.userRepository = userRepository;
         this.officerRepository = officerRepository;
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
-    public  User login(String kakaoId){
+    public TokenDTO login(String kakaoId){
         User user = userRepository.findByKakaoId(kakaoId)
                 .orElseThrow(() -> new UserException(ErrorStatus.USER_NOT_FOUND));
 
@@ -37,10 +41,10 @@ public class AuthServiceImpl implements AuthService{
             throw new UserException(ErrorStatus.OFFICER_NOT_APPROVED);
         }
 
-        return user;
+        return tokenProvider.createToken(user);
     }
 
-    public User signUp(UserDTO.UserRequest.SignUpRequest request) {
+    public TokenDTO signUp(UserDTO.UserRequest.SignUpRequest request) {
         if (userRepository.existsByKakaoId(request.getKakaoId())){
             throw new UserException(ErrorStatus.USER_ALREADY_EXISTIS);
         }
@@ -64,7 +68,17 @@ public class AuthServiceImpl implements AuthService{
             saveOfficerInfo(savedUser,request.getOfficerInfo());
         }
 
-        return savedUser;
+        //회원가입 성공 후 즉시 토큰 발급
+        if (savedUser.getStatus() == Status.PENDING) {
+            // 회장단은 가입은 성공했으나 토큰은 나중에 승인 후 받을 수 있다는 의미로 null 혹은 특정 응답 반환
+            return TokenDTO.builder()
+                    .grantType("Bearer")
+                    .accessToken("PENDING_APPROVAL") // 혹은 null
+                    .build();
+        }
+
+
+        return tokenProvider.createToken(savedUser);
     }
 
     private void saveOfficerInfo(User user, OfficerDTO.OfficerRequest.officerSignUpRequest officerInfo){

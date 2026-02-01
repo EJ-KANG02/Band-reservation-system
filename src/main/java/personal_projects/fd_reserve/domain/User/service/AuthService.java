@@ -5,10 +5,11 @@ import org.springframework.transaction.annotation.Transactional;
 import personal_projects.fd_reserve.domain.User.dto.UserDTO;
 import personal_projects.fd_reserve.domain.User.entity.User;
 import personal_projects.fd_reserve.domain.User.repository.UserRepository;
+import personal_projects.fd_reserve.global.jwt.dto.TokenDTO;
 
 
 public interface AuthService {
 
-    User login(String kakaoId);
-    User signUp(UserDTO.UserRequest.SignUpRequest request);
+    TokenDTO login(String kakaoId);
+    TokenDTO signUp(UserDTO.UserRequest.SignUpRequest request);
 }
