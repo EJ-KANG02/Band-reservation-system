@@ -17,7 +17,10 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4001", "유저 정보가 존재하지 않습니다."),
     USER_ALREADY_EXISTIS(HttpStatus.MULTI_STATUS, "USER4002", "이미 계정이 존재합니다."),
     NICKNAME_ALREADY_EXISTS(HttpStatus.MULTI_STATUS, "USER4003", "중복된 닉네임입니다."),
-    OFFICER_NOT_APPROVED(HttpStatus.FORBIDDEN, "USER4004", "회장단 승인이 되지 않은 계정입니다.");
+    OFFICER_NOT_APPROVED(HttpStatus.FORBIDDEN, "USER4004", "회장단 승인이 되지 않은 계정입니다."),
+
+    //RESERVATION 관련 에러
+    TEAM_NAME_NOT_FOUND(HttpStatus.NOT_FOUND, "RESERVATION4001", "속한 팀이 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
