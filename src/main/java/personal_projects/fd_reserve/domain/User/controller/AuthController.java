@@ -1,6 +1,7 @@
 package personal_projects.fd_reserve.domain.User.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,14 +19,11 @@ import personal_projects.fd_reserve.global.jwt.dto.TokenDTO;
 
 @RestController
 @Validated
+@RequiredArgsConstructor
 @RequestMapping("/api/v0/auth")
 public class AuthController {
 
     private final AuthService authService;
-
-    public AuthController(AuthService authService){
-        this.authService = authService;
-    }
 
     @PostMapping("/login")
     public ApiResponse<TokenDTO> login(@Valid @RequestBody UserDTO.UserRequest.LoginRequest request) {
