@@ -2,12 +2,12 @@ package personal_projects.fd_reserve.domain.User.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import personal_projects.fd_reserve.domain.Officer.dto.OfficerDTO;
 import personal_projects.fd_reserve.global.common.enums.Role;
+import personal_projects.fd_reserve.global.common.enums.Status;
+
+import java.time.LocalDateTime;
 
 public class UserDTO {
 
