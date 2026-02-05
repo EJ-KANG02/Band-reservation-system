@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import personal_projects.fd_reserve.global.common.BaseEntity;
 import personal_projects.fd_reserve.global.common.enums.Role;
 import personal_projects.fd_reserve.global.common.enums.Status;
 
@@ -15,7 +16,7 @@ import personal_projects.fd_reserve.global.common.enums.Status;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "users")
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
