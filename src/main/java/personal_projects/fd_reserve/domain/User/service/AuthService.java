@@ -2,6 +2,7 @@ package personal_projects.fd_reserve.domain.User.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import personal_projects.fd_reserve.domain.Officer.dto.OfficerDTO;
 import personal_projects.fd_reserve.domain.User.dto.UserDTO;
 import personal_projects.fd_reserve.domain.User.entity.User;
 import personal_projects.fd_reserve.domain.User.repository.UserRepository;
