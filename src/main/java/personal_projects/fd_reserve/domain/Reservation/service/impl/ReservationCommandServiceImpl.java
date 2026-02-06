@@ -29,7 +29,20 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
             }
         }
 
+        boolean isOverlapping = reservationRepository.existOverlappingReservation(
+                request.getDate(),
+                request.getStartTime(),
+                request.getEndTime()
+        );
+
+        //기존 시간표와 충돌 여부 검증
+        if (isOverlapping) {
+            throw new ReservationException(ErrorStatus.RESERVATION_TIME_CONFLICT);
+        }
+
         Reservation newReservation = ReservationConverter.toReservation(user, request);
         return newReservation;
     }
+
+
 }

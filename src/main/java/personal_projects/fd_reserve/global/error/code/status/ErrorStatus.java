@@ -20,7 +20,8 @@ public enum ErrorStatus implements BaseErrorCode {
     OFFICER_NOT_APPROVED(HttpStatus.FORBIDDEN, "USER4004", "회장단 승인이 되지 않은 계정입니다."),
 
     //RESERVATION 관련 에러
-    TEAM_NAME_NOT_FOUND(HttpStatus.NOT_FOUND, "RESERVATION4001", "속한 팀이 없습니다.");
+    TEAM_NAME_NOT_FOUND(HttpStatus.NOT_FOUND, "RESERVATION4001", "속한 팀이 없습니다."),
+    RESERVATION_TIME_CONFLICT(HttpStatus.CONFLICT, "RESERVATION4002", "기존 시간표와 겹칩니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
