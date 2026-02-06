@@ -29,6 +29,10 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
             }
         }
 
+        if (request.getEndTime().isBefore(request.getStartTime())){
+            throw new ReservationException(ErrorStatus.INVALID_RESERVATION_TIME);
+        }
+
         boolean isOverlapping = reservationRepository.existOverlappingReservation(
                 request.getDate(),
                 request.getStartTime(),
