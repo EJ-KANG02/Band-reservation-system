@@ -3,6 +3,7 @@ package personal_projects.fd_reserve.domain.Reservation.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +26,7 @@ public class ReservationController {
 
     @PostMapping("")
     public ApiResponse<ReservationDTO.ReservationResponse.CreateResponse> createReservation(
-            @AuthenticationPrincipal User principal,
+            @AuthenticationPrincipal UserDetails principal,
             @RequestBody @Valid ReservationDTO.ReservationRequest.CreateRequest request
     ) {
         Reservation reservation = reservationCommandService.createReservation(principal, request);
