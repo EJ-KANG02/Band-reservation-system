@@ -21,7 +21,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //RESERVATION 관련 에러
     TEAM_NAME_NOT_FOUND(HttpStatus.NOT_FOUND, "RESERVATION4001", "속한 팀이 없습니다."),
-    RESERVATION_TIME_CONFLICT(HttpStatus.CONFLICT, "RESERVATION4002", "기존 시간표와 겹칩니다.");
+    RESERVATION_TIME_CONFLICT(HttpStatus.CONFLICT, "RESERVATION4002", "기존 시간표와 겹칩니다."),
+    INVALID_RESERVATION_TIME(HttpStatus.BAD_REQUEST, "RESERVATION4003", "끝나는 시각이 시작 시각보다 빠릅니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
