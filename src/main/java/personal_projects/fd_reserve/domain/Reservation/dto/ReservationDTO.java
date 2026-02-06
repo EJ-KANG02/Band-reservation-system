@@ -1,5 +1,6 @@
 package personal_projects.fd_reserve.domain.Reservation.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -21,15 +22,16 @@ public class ReservationDTO {
         @Builder
         public static class CreateRequest{
 
-            @NotBlank(message = "날짜는 필수 입력 값입니다.")
+            @NotNull(message = "날짜는 필수 입력 값입니다.")
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
             private LocalDate date;
 
             @NotNull(message = "시작 시간은 필수 입력 값입니다.")
-            @Pattern(regexp = "^[0-2][0-9]:[0-5][0-9]$", message = "시간 형식이 올바르지 않습니다. HH:mm 형식으로 입력해주세요.")
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
             private LocalTime startTime;
 
             @NotNull(message = "종료 시간은 필수 입력 값입니다.")
-            @Pattern(regexp = "^[0-2][0-9]:[0-5][0-9]$", message = "시간 형식이 올바르지 않습니다. HH:mm 형식으로 입력해주세요.")
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
             private LocalTime endTime;
 
             @NotNull(message = "카테고리는 필수 입력 값입니다.")
