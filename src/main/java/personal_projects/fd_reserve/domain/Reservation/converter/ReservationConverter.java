@@ -3,6 +3,7 @@ package personal_projects.fd_reserve.domain.Reservation.converter;
 import personal_projects.fd_reserve.domain.Reservation.dto.ReservationDTO;
 import personal_projects.fd_reserve.domain.Reservation.entity.Reservation;
 import personal_projects.fd_reserve.domain.User.entity.User;
+import personal_projects.fd_reserve.global.common.enums.Category;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +25,19 @@ public class ReservationConverter {
                 .reservationId(reservation.getId())
                 .nickname(reservation.getUser().getNickname())
                 .createdAt(reservation.getCreatedAt())
+                .build();
+    }
+
+    public static ReservationDTO.ReservationResponse.ReservationDetailDTO toReservationDetailDTO(Reservation reservation, boolean isOngoing) {
+        return ReservationDTO.ReservationResponse.ReservationDetailDTO.builder()
+                .reservationId(reservation.getId())
+                .nickname(reservation.getUser().getNickname())
+                .teamName(reservation.getCategory() == Category.DRUM ? "-" : reservation.getUser().getTeamName())
+                .date(reservation.getDate())
+                .startTime(reservation.getStartTime())
+                .endTime(reservation.getEndTime())
+                .category(reservation.getCategory())
+                .isOngoing(isOngoing)
                 .build();
     }
 }

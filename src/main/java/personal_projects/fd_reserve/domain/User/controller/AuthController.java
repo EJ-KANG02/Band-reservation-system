@@ -34,7 +34,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ApiResponse<TokenDTO> signUp(@Valid @RequestBody UserDTO.UserRequest.SignUpRequest request) {
-        // 모든 정보(이름, 학번, 팀, 역할 등)를 받아서 저장합니다.
+        // 모든 정보(이름, 학번, 팀, 역할 등)를 받아서 저장
         TokenDTO tokenDTO = authService.signUp(request);
         return ApiResponse.onSuccess(tokenDTO);
     }

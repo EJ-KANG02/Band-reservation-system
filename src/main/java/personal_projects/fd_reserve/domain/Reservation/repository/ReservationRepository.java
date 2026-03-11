@@ -8,6 +8,7 @@ import personal_projects.fd_reserve.domain.Reservation.entity.Reservation;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
@@ -18,4 +19,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     boolean existOverlappingReservation(@Param("date")LocalDate date,
                                         @Param("startTime")LocalTime startTime,
                                         @Param("endTime")LocalTime endTime);
+
+    @Query("SELECT r FROM Reservation r " +
+            "WHERE r.date > :nowDate OR (r.date = :nowDate AND r.endTime > :nowTime) " +
+            "ORDER BY r.date ASC, r.startTime ASC ")
+    List<Reservation> findAllActiveReservations(@Param("nowDate") LocalDate nowDate, @Param("nowTime") LocalTime nowTime);
+
 }

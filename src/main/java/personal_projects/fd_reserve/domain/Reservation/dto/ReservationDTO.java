@@ -11,15 +11,16 @@ import personal_projects.fd_reserve.global.common.enums.Category;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 public class ReservationDTO {
 
     public static class ReservationRequest{
 
-        @Getter
-        @NoArgsConstructor
-        @AllArgsConstructor
         @Builder
+        @Getter
+        @NoArgsConstructor(access = AccessLevel.PROTECTED)
+        @AllArgsConstructor(access = AccessLevel.PROTECTED)
         public static class CreateRequest{
 
             @NotNull(message = "날짜는 필수 입력 값입니다.")
@@ -51,5 +52,28 @@ public class ReservationDTO {
             private LocalDateTime createdAt;
         }
 
+
+        @Builder
+        @Getter
+        @NoArgsConstructor(access = AccessLevel.PROTECTED)
+        @AllArgsConstructor(access = AccessLevel.PROTECTED)
+        public static class ReservationDetailDTO {
+            private Long reservationId;
+            private String nickname;
+            private String teamName;
+            private LocalDate date;
+            private LocalTime startTime;
+            private LocalTime endTime;
+            private Category category;
+            private boolean isOngoing;
+        }
+
+        @Builder
+        @Getter
+        @NoArgsConstructor(access = AccessLevel.PROTECTED)
+        @AllArgsConstructor(access = AccessLevel.PROTECTED)
+        public static class ReservationListDTO {
+            private List<ReservationDetailDTO> reservationList;
+        }
     }
 }
