@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 public class ReservationDTO {
 
@@ -74,6 +75,32 @@ public class ReservationDTO {
         @AllArgsConstructor(access = AccessLevel.PROTECTED)
         public static class ReservationListDTO {
             private List<ReservationDetailDTO> reservationList;
+        }
+
+        @Builder
+        @Getter
+        @NoArgsConstructor(access = AccessLevel.PROTECTED)
+        @AllArgsConstructor(access = AccessLevel.PROTECTED)
+        public static class WeeklyReservationDetailDTO {
+            private Long reservationId;
+            private String nickname;
+            private String teamName;
+            private LocalDate date;
+            private LocalTime startTime;
+            private LocalTime endTime;
+            private Category category;
+        }
+
+
+        @Builder
+        @Getter
+        @NoArgsConstructor(access = AccessLevel.PROTECTED)
+        @AllArgsConstructor(access = AccessLevel.PROTECTED)
+        public static class WeeklyTimetableDTO {
+            private LocalDate startDate;
+            private LocalDate endDate;
+            //key = 예약 일자
+            private Map<LocalDate, List<WeeklyReservationDetailDTO>> timetable;
         }
     }
 }

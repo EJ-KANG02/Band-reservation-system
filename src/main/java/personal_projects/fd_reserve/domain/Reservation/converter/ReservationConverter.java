@@ -5,7 +5,9 @@ import personal_projects.fd_reserve.domain.Reservation.entity.Reservation;
 import personal_projects.fd_reserve.domain.User.entity.User;
 import personal_projects.fd_reserve.global.common.enums.Category;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ReservationConverter {
 
@@ -38,6 +40,18 @@ public class ReservationConverter {
                 .endTime(reservation.getEndTime())
                 .category(reservation.getCategory())
                 .isOngoing(isOngoing)
+                .build();
+    }
+
+    public static ReservationDTO.ReservationResponse.WeeklyReservationDetailDTO toWeeklyReservationDetailDTO(Reservation reservation) {
+        return ReservationDTO.ReservationResponse.WeeklyReservationDetailDTO.builder()
+                .reservationId(reservation.getId())
+                .nickname(reservation.getUser().getNickname())
+                .teamName(reservation.getCategory() == Category.DRUM ? "-" : reservation.getUser().getTeamName())
+                .date(reservation.getDate())
+                .startTime(reservation.getStartTime())
+                .endTime(reservation.getEndTime())
+                .category(reservation.getCategory())
                 .build();
     }
 }

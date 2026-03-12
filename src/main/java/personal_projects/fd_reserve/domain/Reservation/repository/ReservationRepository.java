@@ -25,4 +25,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "ORDER BY r.date ASC, r.startTime ASC ")
     List<Reservation> findAllActiveReservations(@Param("nowDate") LocalDate nowDate, @Param("nowTime") LocalTime nowTime);
 
+    @Query("SELECT r FROM Reservation r " +
+            "WHERE r.date BETWEEN :startDate AND :endDate " +
+            "ORDER BY r.date ASC, r.startTime ASC ")
+    List<Reservation> findAllByDateBetween(LocalDate startDate, LocalDate endDate);
 }
