@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v0/auth/signup", "/api/v0/auth/login").permitAll() // 가입/로그인은 누구나 가능
                         .requestMatchers("/api/v0/admin/**").hasRole("OFFICER") // 어드민은 회장단만 가능
+                        .requestMatchers("/api/v0/settings/**").hasRole("OFFICER") // 설정 접근은 회장단만 가능
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
 
