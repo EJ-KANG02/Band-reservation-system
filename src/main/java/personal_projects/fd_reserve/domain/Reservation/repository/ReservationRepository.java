@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import personal_projects.fd_reserve.domain.Reservation.entity.Reservation;
+import personal_projects.fd_reserve.domain.User.entity.User;
+import personal_projects.fd_reserve.global.common.enums.Category;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -29,4 +31,27 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "WHERE r.date BETWEEN :startDate AND :endDate " +
             "ORDER BY r.date ASC, r.startTime ASC ")
     List<Reservation> findAllByDateBetween(LocalDate startDate, LocalDate endDate);
+
+
+    @Query("SELECT COUNT(r) FROM Reservation r " +
+            "WHERE r.user.teamName = :teamName " +
+            "AND r.category = :category " +
+            "AND r.date BETWEEN :startDate AND :endDate")
+    long countByTeamNameAndCategoryAndDateBetween(
+            @Param("teamName") String teamName,
+            @Param("category") Category category,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("SELECT COUNT(r) FROM Reservation r " +
+            "WHERE r.user = :user " +
+            "AND r.category = :category " +
+            "AND r.date BETWEEN :startDate AND :endDate")
+    long countByUserAndCategoryAndDateBetween(
+            @Param("user") User user,
+            @Param("category") Category category,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }
