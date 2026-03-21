@@ -47,7 +47,7 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public TokenDTO signUp(UserDTO.UserRequest.SignUpRequest request) {
         if (userRepository.existsByKakaoId(request.getKakaoId())){
-            throw new UserException(ErrorStatus.USER_ALREADY_EXISTIS);
+            throw new UserException(ErrorStatus.USER_ALREADY_EXISTS);
         }
 
         if (userRepository.existsByNickname(request.getNickname())) {
