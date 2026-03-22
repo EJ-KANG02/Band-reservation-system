@@ -69,4 +69,12 @@ public class ReservationQueryServiceImpl implements ReservationQueryService {
                 .timetable(timetable)
                 .build();
     }
+
+    public List<ReservationDTO.ReservationResponse.ReservedTimeDTO> getReservedTimeByDate(LocalDate date){
+        List<Reservation> reservations = reservationRepository.findAllByDate(date);
+
+        return reservations.stream()
+                .map(ReservationConverter::toReservedTimeDTO)
+                .collect(Collectors.toList());
+    }
 }

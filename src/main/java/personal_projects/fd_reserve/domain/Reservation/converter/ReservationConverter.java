@@ -54,4 +54,11 @@ public class ReservationConverter {
                 .category(reservation.getCategory())
                 .build();
     }
+
+    public static ReservationDTO.ReservationResponse.ReservedTimeDTO toReservedTimeDTO(Reservation reservation) {
+        return ReservationDTO.ReservationResponse.ReservedTimeDTO.builder()
+                .startTime(reservation.getStartTime())
+                .endTime(reservation.getEndTime())
+                .build();
+    }
 }

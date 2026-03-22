@@ -14,6 +14,8 @@ import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
+    List<Reservation> findAllByDate(LocalDate date);
+
     @Query("SELECT EXISTS (SELECT 1 FROM Reservation r " +
             "WHERE r.date = :date " +
             "AND r.startTime < :endTime " +
