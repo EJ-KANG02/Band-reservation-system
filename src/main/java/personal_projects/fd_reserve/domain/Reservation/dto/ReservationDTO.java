@@ -1,7 +1,9 @@
 package personal_projects.fd_reserve.domain.Reservation.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -17,6 +19,16 @@ import java.util.Map;
 public class ReservationDTO {
 
     public static class ReservationRequest{
+
+        @Builder
+        @Getter
+        @NoArgsConstructor(access = AccessLevel.PROTECTED)
+        @AllArgsConstructor(access = AccessLevel.PROTECTED)
+        public static class BulkCreateDTO {
+            @Valid
+            @NotEmpty(message = "최소 하나 이상의 예약 시간대가 필요합니다.")
+            private List<CreateRequest> reservationList;
+        }
 
         @Builder
         @Getter
@@ -101,6 +113,15 @@ public class ReservationDTO {
             private LocalDate endDate;
             //key = 예약 일자
             private Map<LocalDate, List<WeeklyReservationDetailDTO>> timetable;
+        }
+
+        @Builder
+        @Getter
+        @NoArgsConstructor(access = AccessLevel.PROTECTED)
+        @AllArgsConstructor(access = AccessLevel.PROTECTED)
+        public static class ReservedTimeDTO {
+            private LocalTime startTime;
+            private LocalTime endTime;
         }
     }
 }

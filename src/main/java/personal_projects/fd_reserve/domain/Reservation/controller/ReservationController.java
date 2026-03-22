@@ -15,6 +15,7 @@ import personal_projects.fd_reserve.domain.Reservation.service.ReservationQueryS
 import personal_projects.fd_reserve.global.error.ApiResponse;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,13 +27,13 @@ public class ReservationController {
     private final ReservationQueryService reservationQueryService;
 
     @PostMapping("")
-    public ApiResponse<ReservationDTO.ReservationResponse.CreateResponse> createReservation(
+    public ApiResponse<List<ReservationDTO.ReservationResponse.CreateResponse>> createReservation(
             @AuthenticationPrincipal UserDetails principal,
-            @RequestBody @Valid ReservationDTO.ReservationRequest.CreateRequest request
+            @RequestBody @Valid ReservationDTO.ReservationRequest.BulkCreateDTO request
     ) {
-        Reservation reservation = reservationCommandService.createReservation(principal, request);
+        List<ReservationDTO.ReservationResponse.CreateResponse> results = reservationCommandService.createBulkReservations(principal, request);
 
-        return ApiResponse.onSuccess(ReservationConverter.toCreateResult(reservation));
+        return ApiResponse.onSuccess(results);
     }
 
     @GetMapping("/active")
@@ -47,6 +48,14 @@ public class ReservationController {
     ) {
         ReservationDTO.ReservationResponse.WeeklyTimetableDTO response = reservationQueryService.getWeeklyTimetable(date);
         return ApiResponse.onSuccess(response);
+    }
+
+    @GetMapping("/check-availability")
+    public ApiResponse<List<ReservationDTO.ReservationResponse.ReservedTimeDTO>> getReservedTimes(
+            @RequestParam(name = "date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date
+    ) {
+        List<ReservationDTO.ReservationResponse.ReservedTimeDTO> reservedTimes = reservationQueryService.getReservedTimeByDate(date);
+        return ApiResponse.onSuccess(reservedTimes);
     }
 
 }

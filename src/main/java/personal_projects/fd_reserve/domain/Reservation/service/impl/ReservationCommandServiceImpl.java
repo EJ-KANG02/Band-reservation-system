@@ -24,6 +24,8 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +36,7 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
     private final UserRepository userRepository;
 
     @Override
-    public Reservation createReservation(UserDetails principal, ReservationDTO.ReservationRequest.CreateRequest request){
-
+    public List<ReservationDTO.ReservationResponse.CreateResponse> createBulkReservations(UserDetails principal, ReservationDTO.ReservationRequest.BulkCreateDTO request) {
         String kakaoId = principal.getUsername();
 
         //스프링 시큐리티 객체에서 꺼낸 kakaoId로 User 객체 찾아주기
@@ -45,6 +46,37 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
         //설정 정보 가져오기
         Setting setting = settingRepository.findById(1L)
                 .orElseThrow(() -> new SettingException(ErrorStatus.SETTING_NOT_FOUND));
+
+        List<ReservationDTO.ReservationResponse.CreateResponse> results = new ArrayList<>();
+
+        // 현재의 벌크 요청 내에서 카테고리별로 몇 개를 승인했는지 추적하는 카운터
+        int ensembleCountInRequest = 0;
+        int drumCountInRequest = 0;
+
+        for (ReservationDTO.ReservationRequest.CreateRequest singleRequest : request.getReservationList()){
+
+            validateSingleReservation(user, singleRequest, setting,
+                    singleRequest.getCategory() == Category.ENSEMBLE ? ensembleCountInRequest : drumCountInRequest);
+
+            // 검증 통과 시 카운트 증가
+            if (singleRequest.getCategory() == Category.ENSEMBLE) ensembleCountInRequest++;
+            else if (singleRequest.getCategory() == Category.DRUM) drumCountInRequest++;
+
+            Reservation reservation = ReservationConverter.toReservation(user, singleRequest);
+            Reservation saved = reservationRepository.save(reservation);
+
+            results.add(ReservationConverter.toCreateResult(saved));
+        }
+
+        return results;
+    }
+
+    private void validateSingleReservation(User user, ReservationDTO.ReservationRequest.CreateRequest request, Setting setting, int currentRequestCount) {
+        //예약 시작 시각 < 종료 시각 검증
+        if (request.getEndTime().isBefore(request.getStartTime())){
+            throw new ReservationException(ErrorStatus.INVALID_RESERVATION_TIME);
+        }
+
         LocalDate startOfWeek = request.getDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate endOfWeek = request.getDate().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
 
@@ -64,10 +96,10 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
 
             String teamName = user.getTeamName();
 
-            //주당 횟수 제한 체크
+            //주당 횟수 제한 체크 ( + 현재 트랜잭션 내에서 등록된 예약 개수)
             long count = reservationRepository.countByTeamNameAndCategoryAndDateBetween(
                     teamName, Category.ENSEMBLE, startOfWeek, endOfWeek
-            );
+            ) + currentRequestCount;
 
             if (count >= setting.getEnsembleMaxCountPerWeek()) {
                 throw new ReservationException(ErrorStatus.EXCEEDED_WEEKLY_COUNT_LIMIT);
@@ -85,16 +117,11 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
             //주당 횟수 제한 체크
             long count = reservationRepository.countByUserAndCategoryAndDateBetween(
                     user, Category.DRUM, startOfWeek, endOfWeek
-            );
+            ) + currentRequestCount;
 
             if (count >= setting.getDrumMaxCountPerWeek()) {
                 throw new ReservationException(ErrorStatus.EXCEEDED_WEEKLY_COUNT_LIMIT);
             }
-        }
-
-        //예약 시작 시각 < 종료 시각 검증
-        if (request.getEndTime().isBefore(request.getStartTime())){
-            throw new ReservationException(ErrorStatus.INVALID_RESERVATION_TIME);
         }
 
         boolean isOverlapping = reservationRepository.existOverlappingReservation(
@@ -107,10 +134,6 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
         if (isOverlapping) {
             throw new ReservationException(ErrorStatus.RESERVATION_TIME_CONFLICT);
         }
-
-        Reservation newReservation = ReservationConverter.toReservation(user, request);
-        return reservationRepository.save(newReservation);
     }
-
 
 }
