@@ -20,11 +20,13 @@ public enum ErrorStatus implements BaseErrorCode {
     OFFICER_NOT_APPROVED(HttpStatus.FORBIDDEN, "USER4031", "회장단 승인이 되지 않은 계정입니다."),
 
     //RESERVATION 관련 에러
-    TEAM_NAME_NOT_FOUND(HttpStatus.NOT_FOUND, "RESERVATION4041", "속한 팀이 없습니다."),
+    RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "RESERVATION4041", "예약 정보가 존재하지 않습니다."),
+    TEAM_NAME_NOT_FOUND(HttpStatus.NOT_FOUND, "RESERVATION4042", "속한 팀이 없습니다."),
     RESERVATION_TIME_CONFLICT(HttpStatus.CONFLICT, "RESERVATION4091", "기존 시간표와 겹칩니다."),
     INVALID_RESERVATION_TIME(HttpStatus.BAD_REQUEST, "RESERVATION4001", "끝나는 시각이 시작 시각보다 빠릅니다."),
     EXCEEDED_TIME_LIMIT(HttpStatus.FORBIDDEN, "RESERVATION4031", "회당 예약 가능 시간을 초과했습니다."),
     EXCEEDED_WEEKLY_COUNT_LIMIT(HttpStatus.FORBIDDEN, "RESERVATION4032", "주당 예약 가능 횟수를 초과했습니다."),
+    RESERVATION_NOT_OWNER(HttpStatus.FORBIDDEN, "RESERVATION4033", "해당 예약에 대한 수정/삭제 권한이 없습니다."),
 
     //Setting 관련 에러
     SETTING_NOT_FOUND(HttpStatus.NOT_FOUND, "SETTING4041", "설정된 값이 없습니다.");
