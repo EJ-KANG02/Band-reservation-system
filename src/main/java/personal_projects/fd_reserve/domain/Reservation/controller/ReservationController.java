@@ -72,4 +72,18 @@ public class ReservationController {
         return ApiResponse.onSuccess(reservedTimes);
     }
 
+    @Operation(summary = "예약 수정 API",
+            description = "기존 예약의 날짜, 시간, 카테고리를 변경합니다. 본인의 예약만 수정 가능합니다.")
+    @PatchMapping("/{reservationId}")
+    public ApiResponse<ReservationDTO.ReservationResponse.UpdateResponse> updateReservation(
+            @AuthenticationPrincipal UserDetails principal,
+            @Parameter(description = "수정할 예약의 ID", example = "10")
+            @PathVariable(name = "reservationId") Long reservationId,
+            @RequestBody @Valid ReservationDTO.ReservationRequest.UpdateRequest request
+    ) {
+        ReservationDTO.ReservationResponse.UpdateResponse result = reservationCommandService.updateReservation(principal, reservationId, request);
+
+        return ApiResponse.onSuccess(result);
+    }
+
 }

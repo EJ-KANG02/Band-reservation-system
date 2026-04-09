@@ -1,12 +1,14 @@
 package personal_projects.fd_reserve.domain.Reservation.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import org.springframework.cglib.core.Local;
 import personal_projects.fd_reserve.domain.User.entity.User;
 import personal_projects.fd_reserve.global.common.enums.Category;
 
@@ -35,6 +37,28 @@ public class ReservationDTO {
         @NoArgsConstructor(access = AccessLevel.PROTECTED)
         @AllArgsConstructor(access = AccessLevel.PROTECTED)
         public static class CreateRequest{
+
+            @NotNull(message = "날짜는 필수 입력 값입니다.")
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+            private LocalDate date;
+
+            @NotNull(message = "시작 시간은 필수 입력 값입니다.")
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+            private LocalTime startTime;
+
+            @NotNull(message = "종료 시간은 필수 입력 값입니다.")
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+            private LocalTime endTime;
+
+            @NotNull(message = "카테고리는 필수 입력 값입니다.")
+            private Category category;
+        }
+
+        @Builder
+        @Getter
+        @NoArgsConstructor(access = AccessLevel.PROTECTED)
+        @AllArgsConstructor(access = AccessLevel.PROTECTED)
+        public static class UpdateRequest {
 
             @NotNull(message = "날짜는 필수 입력 값입니다.")
             @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -122,6 +146,19 @@ public class ReservationDTO {
         public static class ReservedTimeDTO {
             private LocalTime startTime;
             private LocalTime endTime;
+        }
+
+        @Builder
+        @Getter
+        @NoArgsConstructor(access = AccessLevel.PROTECTED)
+        @AllArgsConstructor(access = AccessLevel.PROTECTED)
+        public static class UpdateResponse {
+            private Long reservationId;
+            private LocalDate date;
+            private LocalTime startTime;
+            private LocalTime endTime;
+            private String category;
+            private LocalDateTime updatedAt;
         }
     }
 }

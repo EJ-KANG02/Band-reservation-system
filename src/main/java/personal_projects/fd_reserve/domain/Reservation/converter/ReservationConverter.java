@@ -61,4 +61,15 @@ public class ReservationConverter {
                 .endTime(reservation.getEndTime())
                 .build();
     }
+
+    public static ReservationDTO.ReservationResponse.UpdateResponse toUpdateResult(Reservation reservation) {
+        return ReservationDTO.ReservationResponse.UpdateResponse.builder()
+                .reservationId(reservation.getId())
+                .date(reservation.getDate())
+                .startTime(reservation.getStartTime())
+                .endTime(reservation.getEndTime())
+                .category(reservation.getCategory().name())
+                .updatedAt(LocalDateTime.now())
+                .build();
+    }
 }

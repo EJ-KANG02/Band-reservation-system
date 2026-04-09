@@ -47,5 +47,14 @@ public class Reservation extends BaseEntity {
     private Category category;
 
 
+    @Version
+    private Long version;
+
+    public void update(LocalDate date, LocalTime startTime, LocalTime endTime, Category category){
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.category = category;
+    }
 
 }

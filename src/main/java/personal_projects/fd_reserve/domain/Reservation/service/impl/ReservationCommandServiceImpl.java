@@ -136,4 +136,58 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
         }
     }
 
+    public ReservationDTO.ReservationResponse.UpdateResponse updateReservation(
+            UserDetails principal, Long reservationId, ReservationDTO.ReservationRequest.UpdateRequest request
+    ){
+        String kakaoId = principal.getUsername();
+
+        //스프링 시큐리티 객체에서 꺼낸 kakaoId로 User 객체 찾아주기
+        User user = userRepository.findByKakaoId(kakaoId)
+                .orElseThrow(()-> new UserException(ErrorStatus.USER_NOT_FOUND));
+
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ReservationException(ErrorStatus.RESERVATION_NOT_FOUND));
+
+        if (!reservation.getUser().getId().equals(user.getId())) {
+            throw new ReservationException(ErrorStatus.RESERVATION_NOT_OWNER);
+        }
+
+        Setting setting = settingRepository.findById(1L)
+                .orElseThrow(() -> new SettingException(ErrorStatus.SETTING_NOT_FOUND));
+
+        validateUpdateReservation(reservation, request, setting);
+
+        reservation.update(request.getDate(), request.getStartTime(), request.getEndTime(), request.getCategory());
+
+        return ReservationConverter.toUpdateResult(reservation);
+    }
+
+    private void validateUpdateReservation(Reservation reservation, ReservationDTO.ReservationRequest.UpdateRequest request, Setting setting){
+
+        //예약 시작 시각 < 종료 시각 검증
+        if (request.getEndTime().isBefore(request.getStartTime())){
+            throw new ReservationException(ErrorStatus.INVALID_RESERVATION_TIME);
+        }
+
+        //카테고리별 이용 시간 검증
+        long requestedMinutes = Duration.between(request.getStartTime(), request.getEndTime()).toMinutes();
+        int maxTime = (request.getCategory() == Category.ENSEMBLE) ? setting.getEnsembleMaxTime() : setting.getDrumMaxTime();
+
+        if (requestedMinutes > (maxTime * 60)) {
+            throw new ReservationException(ErrorStatus.EXCEEDED_TIME_LIMIT);
+        }
+
+        //시간 중복 검증
+        boolean isOverlapping = reservationRepository.existsOverlappingExceptSelf(
+                request.getDate(),
+                request.getStartTime(),
+                request.getEndTime(),
+                reservation.getId() // 현재 수정 중인 예약 ID 전달
+        );
+
+        if (isOverlapping) {
+            throw new ReservationException(ErrorStatus.RESERVATION_TIME_CONFLICT);
+        }
+    }
+
 }
