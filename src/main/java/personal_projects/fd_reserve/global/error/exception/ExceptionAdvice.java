@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -118,6 +119,15 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                 headers,
                 errorCommonStatus.getHttpStatus(),
                 request
+        );
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ApiResponse<String> handleOptimisticLockingFailureException(ObjectOptimisticLockingFailureException e){
+        return ApiResponse.onFailure(
+                ErrorStatus.RESERVATION_TIME_CONFLICT.getCode(),
+                "다른 사용자가 동시에 수정을 시도했습니다. 다시 시도해주세요.",
+                null
         );
     }
 }

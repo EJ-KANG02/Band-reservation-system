@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import personal_projects.fd_reserve.domain.User.repository.BlacklistRepository;
 import personal_projects.fd_reserve.global.jwt.JwtFilter;
 import personal_projects.fd_reserve.global.jwt.TokenProvider;
 
@@ -17,6 +18,7 @@ import personal_projects.fd_reserve.global.jwt.TokenProvider;
 public class SecurityConfig {
 
     private final TokenProvider tokenProvider;
+    private final BlacklistRepository blacklistRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -34,7 +36,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
 
-                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(tokenProvider, blacklistRepository), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

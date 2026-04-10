@@ -86,4 +86,16 @@ public class ReservationController {
         return ApiResponse.onSuccess(result);
     }
 
+    @Operation(summary = "예약 삭제 API",
+            description = "특정 예약을 삭제합니다. 본인의 예약만 삭제 가능합니다.")
+    @DeleteMapping("/{reservationId}")
+    public ApiResponse<String> deleteReservation(
+            @AuthenticationPrincipal UserDetails principal,
+            @Parameter(description = "삭제할 예약의 ID", example = "10")
+            @PathVariable(name = "reservationId") Long reservationId
+    ) {
+        reservationCommandService.deleteReservation(principal, reservationId);
+        return ApiResponse.onSuccess("예약이 성공적으로 삭제되었습니다.");
+    }
+
 }

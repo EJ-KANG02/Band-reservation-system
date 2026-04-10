@@ -11,4 +11,5 @@ import java.util.List;
 public interface ReservationCommandService {
     List<ReservationDTO.ReservationResponse.CreateResponse> createBulkReservations(UserDetails principal, ReservationDTO.ReservationRequest.BulkCreateDTO request);
     ReservationDTO.ReservationResponse.UpdateResponse updateReservation(UserDetails principal, Long reservationId, ReservationDTO.ReservationRequest.UpdateRequest request);
+    void deleteReservation(UserDetails principal, Long reservationId);
 }

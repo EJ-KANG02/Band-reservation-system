@@ -20,16 +20,11 @@ import personal_projects.fd_reserve.global.jwt.dto.TokenDTO;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService{
     private final UserRepository userRepository;
     private final OfficerRepository officerRepository;
     private final TokenProvider tokenProvider;
-
-    public AuthServiceImpl(UserRepository userRepository, OfficerRepository officerRepository, TokenProvider tokenProvider) {
-        this.userRepository = userRepository;
-        this.officerRepository = officerRepository;
-        this.tokenProvider = tokenProvider;
-    }
 
     @Override
     public TokenDTO login(String kakaoId){

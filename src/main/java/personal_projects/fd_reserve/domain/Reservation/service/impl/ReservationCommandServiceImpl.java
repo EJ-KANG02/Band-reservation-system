@@ -190,4 +190,24 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
         }
     }
 
+    public void deleteReservation(UserDetails principal, Long reservationId) {
+        String kakaoId = principal.getUsername();
+
+        //유저 확인
+        User user = userRepository.findByKakaoId(kakaoId)
+                .orElseThrow(() -> new UserException(ErrorStatus.USER_NOT_FOUND));
+
+        //삭제할 예약 조회
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ReservationException(ErrorStatus.RESERVATION_NOT_FOUND));
+
+        //권한 체크 (본인 확인)
+        if (!reservation.getUser().getId().equals(user.getId())) {
+            throw new ReservationException(ErrorStatus.RESERVATION_NOT_OWNER);
+        }
+
+        //삭제 실행
+        reservationRepository.delete(reservation);
+    }
+
 }

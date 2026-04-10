@@ -48,7 +48,7 @@ public class Reservation extends BaseEntity {
 
 
     @Version
-    private Long version;
+    private Long version; //optimistic lock 적용
 
     public void update(LocalDate date, LocalTime startTime, LocalTime endTime, Category category){
         this.date = date;
