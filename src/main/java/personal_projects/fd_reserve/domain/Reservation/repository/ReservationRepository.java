@@ -69,4 +69,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("endTime") LocalTime endTime,
             @Param("excludeId") Long excludeId
     );
+
+    List<Reservation> findAllByUser(User user);
 }
