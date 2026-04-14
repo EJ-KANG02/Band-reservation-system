@@ -16,4 +16,14 @@ public class UserConverter {
                 .build();
         return newUser;
     }
+
+    public static UserDTO.UserResponse.UserInfoResponse toUserInfoResponse(User user) {
+        return UserDTO.UserResponse.UserInfoResponse.builder()
+                .nickname(user.getNickname())
+                .name(user.getName())
+                .studentId(user.getStudentId())
+                .teamName(user.getTeamName())
+                .role(user.getRole().name())
+                .build();
+    }
 }

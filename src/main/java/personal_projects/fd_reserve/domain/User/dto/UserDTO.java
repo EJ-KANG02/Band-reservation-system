@@ -45,5 +45,31 @@ public class UserDTO {
 
             private OfficerDTO.OfficerRequest.officerSignUpRequest officerInfo; //회장단일 경우에만 데이터가 채워짐
         }
+
+        @Getter
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @Builder
+        public static class UpdateInfoRequest {
+            private String nickname;  // optional
+            private String name;      // optional
+            private String studentId; // optional
+            private String teamName; //optional
+        }
+    }
+
+    public static class UserResponse{
+
+        @Getter
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @Builder
+        public static class UserInfoResponse {
+            private String nickname;
+            private String name;
+            private String studentId;
+            private String teamName;
+            private String role;
+        }
     }
 }

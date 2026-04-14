@@ -47,4 +47,11 @@ public class User extends BaseEntity {
     public void setStatus(Status status) {
         this.status = status;
     }
+
+    public void updateInfo(String nickname, String name, String studentId, String teamName) {
+        if (nickname != null && !nickname.isBlank()) this.nickname = nickname;
+        if (name != null && !name.isBlank()) this.name = name;
+        if (studentId != null && !studentId.isBlank()) this.studentId = studentId;
+        if (teamName != null && !teamName.isBlank()) this.teamName = teamName;
+    }
 }
