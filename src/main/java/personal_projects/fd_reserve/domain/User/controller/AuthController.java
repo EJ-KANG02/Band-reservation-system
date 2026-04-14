@@ -3,14 +3,12 @@ package personal_projects.fd_reserve.domain.User.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import personal_projects.fd_reserve.domain.User.dto.UserDTO;
 import personal_projects.fd_reserve.domain.User.entity.User;
 import personal_projects.fd_reserve.domain.User.repository.UserRepository;
@@ -51,4 +49,14 @@ public class AuthController {
         return ApiResponse.onSuccess(tokenDTO);
     }
 
+    @Operation(
+            summary = "닉네임 중복 확인 API",
+            description = "회원가입 시 닉네임 중복 여부를 확인합니다. 사용 가능하면 true, 중복이면 false를 반환합니다."
+    )
+    @GetMapping("/check-nickname")
+    public ApiResponse<Boolean> checkNickname(
+            @RequestParam @NotBlank String nickname) {
+        boolean isAvailable = authService.checkNickname(nickname);
+        return ApiResponse.onSuccess(isAvailable);
+    }
 }

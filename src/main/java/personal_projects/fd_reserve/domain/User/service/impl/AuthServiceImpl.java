@@ -85,4 +85,8 @@ public class AuthServiceImpl implements AuthService{
                 .build();
         officerRepository.save(officer);
     }
+
+    public boolean checkNickname(String nickname) {
+        return !userRepository.existsByNickname(nickname);
+    }
 }

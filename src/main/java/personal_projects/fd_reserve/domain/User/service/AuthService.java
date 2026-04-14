@@ -13,4 +13,5 @@ public interface AuthService {
 
     TokenDTO login(String kakaoId);
     TokenDTO signUp(UserDTO.UserRequest.SignUpRequest request);
+    boolean checkNickname(String nickname);
 }
