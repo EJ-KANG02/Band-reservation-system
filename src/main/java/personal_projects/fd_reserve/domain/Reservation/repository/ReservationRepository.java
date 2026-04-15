@@ -71,4 +71,22 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     );
 
     List<Reservation> findAllByUser(User user);
+
+    // 합주: 특정 날짜에 팀의 예약 목록 조회
+    @Query("SELECT r FROM Reservation r " +
+            "WHERE r.user.teamName = :teamName AND r.category = :category AND r.date = :date")
+    List<Reservation> findByTeamNameAndCategoryAndDate(
+            @Param("teamName") String teamName,
+            @Param("category") Category category,
+            @Param("date") LocalDate date
+    );
+
+    // 드럼: 특정 날짜에 유저의 예약 목록 조회
+    @Query("SELECT r FROM Reservation r " +
+            "WHERE r.user = :user AND r.category = :category AND r.date = :date")
+    List<Reservation> findByUserAndCategoryAndDate(
+            @Param("user") User user,
+            @Param("category") Category category,
+            @Param("date") LocalDate date
+    );
 }

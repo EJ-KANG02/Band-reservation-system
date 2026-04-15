@@ -72,65 +72,85 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
     }
 
     private void validateSingleReservation(User user, ReservationDTO.ReservationRequest.CreateRequest request, Setting setting, int currentRequestCount) {
-        //예약 시작 시각 < 종료 시각 검증
-        if (request.getEndTime().isBefore(request.getStartTime())){
+
+        // 시작 < 종료 검증
+        if (request.getEndTime().isBefore(request.getStartTime())) {
             throw new ReservationException(ErrorStatus.INVALID_RESERVATION_TIME);
         }
 
         LocalDate startOfWeek = request.getDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate endOfWeek = request.getDate().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
 
-        //이용 시간 계산 및 검증
+        // 요청한 예약의 분 단위 시간
         long requestedMinutes = Duration.between(request.getStartTime(), request.getEndTime()).toMinutes();
 
-        //카테고리가 합주일 때, 팀이 존재하는지 검증
-        if (request.getCategory() == Category.ENSEMBLE){
+        if (request.getCategory() == Category.ENSEMBLE) {
             if (user.getTeamName() == null || user.getTeamName().isBlank()) {
                 throw new ReservationException(ErrorStatus.TEAM_NAME_NOT_FOUND);
             }
 
-            //회당 시간 제한 체크
+            // 회당 시간 제한 (단일 예약이 maxTime 초과하는지)
             if (requestedMinutes > (setting.getEnsembleMaxTime() * 60)) {
                 throw new ReservationException(ErrorStatus.EXCEEDED_TIME_LIMIT);
             }
 
             String teamName = user.getTeamName();
 
-            //주당 횟수 제한 체크 ( + 현재 트랜잭션 내에서 등록된 예약 개수)
-            long count = reservationRepository.countByTeamNameAndCategoryAndDateBetween(
+            // 주당 횟수 제한
+            long weeklyCount = reservationRepository.countByTeamNameAndCategoryAndDateBetween(
                     teamName, Category.ENSEMBLE, startOfWeek, endOfWeek
             ) + currentRequestCount;
 
-            if (count >= setting.getEnsembleMaxCountPerWeek()) {
+            if (weeklyCount >= setting.getEnsembleMaxCountPerWeek()) {
                 throw new ReservationException(ErrorStatus.EXCEEDED_WEEKLY_COUNT_LIMIT);
             }
-        }
 
-        //카테고리가 드럼인 경우
-        else if (request.getCategory() == Category.DRUM){
+            // ENSEMBLE 하루 총 시간 체크
+            long dailyUsedMinutes = calculateDailyUsedMinutes(
+                    reservationRepository.findByTeamNameAndCategoryAndDate(
+                            teamName, Category.ENSEMBLE, request.getDate()
+                    )
+            );
 
-            //회당 시간 제한 체크
+            if (dailyUsedMinutes + requestedMinutes > (setting.getEnsembleMaxTime() * 60)) {
+                throw new ReservationException(ErrorStatus.EXCEEDED_TIME_LIMIT);
+            }
+
+        } else if (request.getCategory() == Category.DRUM) {
+
+            // 회당 시간 제한
             if (requestedMinutes > (setting.getDrumMaxTime() * 60)) {
                 throw new ReservationException(ErrorStatus.EXCEEDED_TIME_LIMIT);
             }
 
-            //주당 횟수 제한 체크
-            long count = reservationRepository.countByUserAndCategoryAndDateBetween(
+            // 주당 횟수 제한
+            long weeklyCount = reservationRepository.countByUserAndCategoryAndDateBetween(
                     user, Category.DRUM, startOfWeek, endOfWeek
             ) + currentRequestCount;
 
-            if (count >= setting.getDrumMaxCountPerWeek()) {
+            if (weeklyCount >= setting.getDrumMaxCountPerWeek()) {
                 throw new ReservationException(ErrorStatus.EXCEEDED_WEEKLY_COUNT_LIMIT);
+            }
+
+            // DRUM 하루 총 시간 체크
+            long dailyUsedMinutes = calculateDailyUsedMinutes(
+                    reservationRepository.findByUserAndCategoryAndDate(
+                            user, Category.DRUM, request.getDate()
+                    )
+            );
+
+            if (dailyUsedMinutes + requestedMinutes > (setting.getDrumMaxTime() * 60)) {
+                throw new ReservationException(ErrorStatus.EXCEEDED_TIME_LIMIT);
             }
         }
 
+        // 시간 중복 검증
         boolean isOverlapping = reservationRepository.existOverlappingReservation(
                 request.getDate(),
                 request.getStartTime(),
                 request.getEndTime()
         );
 
-        //기존 시간표와 충돌 여부 검증
         if (isOverlapping) {
             throw new ReservationException(ErrorStatus.RESERVATION_TIME_CONFLICT);
         }
@@ -210,4 +230,9 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
         reservationRepository.delete(reservation);
     }
 
+    private long calculateDailyUsedMinutes(List<Reservation> reservations) {
+        return reservations.stream()
+                .mapToLong(r -> Duration.between(r.getStartTime(), r.getEndTime()).toMinutes())
+                .sum();
+    }
 }
