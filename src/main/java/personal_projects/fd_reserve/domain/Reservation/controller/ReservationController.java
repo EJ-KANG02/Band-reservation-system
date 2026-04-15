@@ -45,8 +45,11 @@ public class ReservationController {
     @Operation(summary = "나의 활성화된 예약 조회 API",
             description = "현재 로그인한 유저가 신청한 예약 중, 아직 시간이 지나지 않은 유효한 예약 목록을 조회합니다.")
     @GetMapping("/active")
-    public ApiResponse<ReservationDTO.ReservationResponse.ReservationListDTO> getActiveReservations() {
-        ReservationDTO.ReservationResponse.ReservationListDTO response = reservationQueryService.getActiveReservationList();
+    public ApiResponse<ReservationDTO.ReservationResponse.ReservationListDTO> getActiveReservations(
+            @AuthenticationPrincipal UserDetails principal) {
+
+        ReservationDTO.ReservationResponse.ReservationListDTO response =
+                reservationQueryService.getActiveReservationList(principal);
         return ApiResponse.onSuccess(response);
     }
 

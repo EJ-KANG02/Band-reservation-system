@@ -89,4 +89,19 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("category") Category category,
             @Param("date") LocalDate date
     );
+
+    @Query("SELECT r FROM Reservation r " +
+            "WHERE (r.date > :nowDate OR (r.date = :nowDate AND r.endTime > :nowTime)) " +
+            "AND (" +
+            "  (r.category = 'DRUM' AND r.user.id = :userId) " +
+            "  OR (r.category = 'ENSEMBLE' AND r.user.id = :userId) " +
+            "  OR (r.category = 'ENSEMBLE' AND :teamName IS NOT NULL AND :teamName <> '' AND r.user.teamName = :teamName)" +
+            ") " +
+            "ORDER BY r.date ASC, r.startTime ASC")
+    List<Reservation> findActiveReservationsForUser(
+            @Param("nowDate") LocalDate nowDate,
+            @Param("nowTime") LocalTime nowTime,
+            @Param("userId") Long userId,
+            @Param("teamName") String teamName
+    );
 }
