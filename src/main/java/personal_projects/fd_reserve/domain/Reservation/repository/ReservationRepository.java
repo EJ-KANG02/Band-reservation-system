@@ -104,4 +104,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("userId") Long userId,
             @Param("teamName") String teamName
     );
+
+    void deleteAllByUser(User user);
 }

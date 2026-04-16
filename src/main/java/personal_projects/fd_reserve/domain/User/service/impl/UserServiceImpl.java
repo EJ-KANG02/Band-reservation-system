@@ -46,12 +46,10 @@ public class UserServiceImpl implements userService {
         User user = userRepository.findByKakaoId(principal.getUsername())
                 .orElseThrow(() -> new UserException(ErrorStatus.USER_NOT_FOUND));
 
-        List<Reservation> myReservations = reservationRepository.findAllByUser(user);
-
-        reservationRepository.deleteAllInBatch(myReservations);
+        reservationRepository.deleteAllByUser(user);
         officerRepository.deleteByUser(user);
-
         userRepository.delete(user);
+
         this.logout(token);
     }
 
