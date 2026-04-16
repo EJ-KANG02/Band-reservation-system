@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import personal_projects.fd_reserve.domain.Officer.dto.OfficerDTO;
+import personal_projects.fd_reserve.global.common.enums.Position;
 import personal_projects.fd_reserve.global.common.enums.Role;
 import personal_projects.fd_reserve.global.common.enums.Status;
 
@@ -70,6 +71,9 @@ public class UserDTO {
             private String studentId;
             private String teamName;
             private String role;
+
+            private Integer batch;
+            private Position position;
         }
     }
 }

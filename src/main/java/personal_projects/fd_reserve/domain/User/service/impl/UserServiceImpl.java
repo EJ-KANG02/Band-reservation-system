@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import personal_projects.fd_reserve.domain.Officer.entity.Officer;
 import personal_projects.fd_reserve.domain.Officer.repository.OfficerRepository;
 import personal_projects.fd_reserve.domain.Reservation.entity.Reservation;
 import personal_projects.fd_reserve.domain.Reservation.repository.ReservationRepository;
@@ -58,7 +59,8 @@ public class UserServiceImpl implements userService {
         User user = userRepository.findByKakaoId(kakaoId)
                 .orElseThrow(() -> new UserException(ErrorStatus.USER_NOT_FOUND));
 
-        return UserConverter.toUserInfoResponse(user);
+        Officer officer = officerRepository.findByUser(user).orElse(null);
+        return UserConverter.toUserInfoResponse(user, officer);
     }
 
     public UserDTO.UserResponse.UserInfoResponse updateMyInfo(
@@ -82,10 +84,11 @@ public class UserServiceImpl implements userService {
                 request.getNickname(),
                 request.getName(),
                 request.getStudentId(),
-                request.getTeamName()  // ← 추가
+                request.getTeamName()
         );
 
-        return UserConverter.toUserInfoResponse(user);
+        Officer officer = officerRepository.findByUser(user).orElse(null);
+        return UserConverter.toUserInfoResponse(user, officer);
 
     }
 }
