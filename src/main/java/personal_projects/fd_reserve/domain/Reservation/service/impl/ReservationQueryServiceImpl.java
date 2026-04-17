@@ -16,10 +16,7 @@ import personal_projects.fd_reserve.global.error.code.status.ErrorStatus;
 import personal_projects.fd_reserve.global.error.handler.UserException;
 
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +32,7 @@ public class ReservationQueryServiceImpl implements ReservationQueryService {
 
     @Override
     public ReservationDTO.ReservationResponse.ReservationListDTO getActiveReservationList(UserDetails principal) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         LocalDate nowDate = now.toLocalDate();
         LocalTime nowTime = now.toLocalTime();
 
