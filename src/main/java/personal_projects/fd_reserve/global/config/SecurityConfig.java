@@ -57,7 +57,9 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5173",
-                "https://band-reservation-frontend.vercel.app"
+                "https://band-reservation-frontend.vercel.app",
+                "https://fearlessdawn.store",
+                "https://www.fearlessdawn.store"
         ));
         configuration.setAllowedMethods(Arrays.asList(
                 "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
