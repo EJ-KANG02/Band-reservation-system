@@ -49,18 +49,9 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
 
         List<ReservationDTO.ReservationResponse.CreateResponse> results = new ArrayList<>();
 
-        // 현재의 벌크 요청 내에서 카테고리별로 몇 개를 승인했는지 추적하는 카운터
-        int ensembleCountInRequest = 0;
-        int drumCountInRequest = 0;
-
         for (ReservationDTO.ReservationRequest.CreateRequest singleRequest : request.getReservationList()){
 
-            validateSingleReservation(user, singleRequest, setting,
-                    singleRequest.getCategory() == Category.ENSEMBLE ? ensembleCountInRequest : drumCountInRequest);
-
-            // 검증 통과 시 카운트 증가
-            if (singleRequest.getCategory() == Category.ENSEMBLE) ensembleCountInRequest++;
-            else if (singleRequest.getCategory() == Category.DRUM) drumCountInRequest++;
+            validateSingleReservation(user, singleRequest, setting);
 
             Reservation reservation = ReservationConverter.toReservation(user, singleRequest);
             Reservation saved = reservationRepository.save(reservation);
@@ -71,7 +62,7 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
         return results;
     }
 
-    private void validateSingleReservation(User user, ReservationDTO.ReservationRequest.CreateRequest request, Setting setting, int currentRequestCount) {
+    private void validateSingleReservation(User user, ReservationDTO.ReservationRequest.CreateRequest request, Setting setting) {
 
         // 시작 < 종료 검증
         if (request.getEndTime().isBefore(request.getStartTime())) {
@@ -99,7 +90,7 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
             // 주당 횟수 제한
             long weeklyCount = reservationRepository.countByTeamNameAndCategoryAndDateBetween(
                     teamName, Category.ENSEMBLE, startOfWeek, endOfWeek
-            ) + currentRequestCount;
+            );
 
             if (weeklyCount >= setting.getEnsembleMaxCountPerWeek()) {
                 throw new ReservationException(ErrorStatus.EXCEEDED_WEEKLY_COUNT_LIMIT);
@@ -126,7 +117,7 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
             // 주당 횟수 제한
             long weeklyCount = reservationRepository.countByUserAndCategoryAndDateBetween(
                     user, Category.DRUM, startOfWeek, endOfWeek
-            ) + currentRequestCount;
+            );
 
             if (weeklyCount >= setting.getDrumMaxCountPerWeek()) {
                 throw new ReservationException(ErrorStatus.EXCEEDED_WEEKLY_COUNT_LIMIT);
