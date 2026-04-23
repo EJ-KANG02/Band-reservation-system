@@ -31,6 +31,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findAllActiveReservations(@Param("nowDate") LocalDate nowDate, @Param("nowTime") LocalTime nowTime);
 
     @Query("SELECT r FROM Reservation r " +
+            "JOIN FETCH r.user " +
             "WHERE r.date BETWEEN :startDate AND :endDate " +
             "ORDER BY r.date ASC, r.startTime ASC ")
     List<Reservation> findAllByDateBetween(LocalDate startDate, LocalDate endDate);
@@ -91,6 +92,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     );
 
     @Query("SELECT r FROM Reservation r " +
+            "JOIN FETCH r.user " +
             "WHERE (r.date > :nowDate OR (r.date = :nowDate AND r.endTime > :nowTime)) " +
             "AND (" +
             "  (r.category = 'DRUM' AND r.user.id = :userId) " +
